@@ -24,14 +24,18 @@ Sub Globals
 	Dim sbg,mbg As BitmapDrawable
 	Dim copy As BClipboard
 	Dim lb As Label
-	Dim mm As Typeface : mm = mm.LoadFromAssets("myanmarlove.ttf")
+	Dim mm As Typeface : mm = mm.LoadFromAssets("Love.ttf")
+	
+	Dim ml As MLfiles
+	Dim sdroot As String
+	Dim zip As ABZipUnzip
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
 	
 	lb.Initialize("lb")
 	lb.Gravity = Gravity.CENTER
-	lb.Text = "	ပထမဦးစြာ Install ကိုႏွိပ္ပါ။ ျပီးရင္ေအာက္ပါ Change Font ကိုနွိပ္ျပီး System Font မွာ Myanmar Love Font ကိုေရြးေပးလိုက္ပါ။"
+	lb.Text = "	ပထမဦးစြာ Install ကိုႏွိပ္ျပီး ေဖာင့္ေရြးထည့္ေပးပါ။ ျပီးရင္ေအာက္ပါ Change Font ကိုနွိပ္ျပီး System Font မွာ Myanmar Love Font ကိုေရြးေပးလိုက္ပါ။ သို့မဟုတ္ Theme ထဲက Font မွာ Myanmar Love Font ကိုေရြးျပီး Apply ေပးပါ။"
 	Activity.AddView(lb,2%x,55dip+1%y,90%x,30%y)
 	lb.TextColor = Colors.Black
 	lb.Typeface = mm
@@ -99,13 +103,22 @@ Sub Activity_Create(FirstTime As Boolean)
 	share.Gravity = Gravity.CENTER
 	Activity.AddView(share,100%x - 40dip,12.5dip,30dip,30dip)
 	
-	Banner.Initialize("Banner","ca-app-pub-4173348573252986/8928808550")
+	Banner.Initialize2("Banner","ca-app-pub-4173348573252986/8641103753",Banner.SIZE_SMART_BANNER)
+	Dim height As Int
+	If GetDeviceLayoutValues.ApproximateScreenSize < 6 Then
+		'phones
+		If 100%x > 100%y Then height = 32dip Else height = 50dip
+	Else
+		'tablets
+		height = 90dip
+	End If
+	Activity.AddView(Banner, 0dip, 100%y - height, 100%x, height)
 	Banner.LoadAd
-	Activity.AddView(Banner,0%x,100%y - 50dip,100%x,50dip)
-		
-	Interstitial.Initialize("Interstitial","ca-app-pub-4173348573252986/1405541758")
+	Log(Banner)
+	
+	Interstitial.Initialize("Interstitial","ca-app-pub-4173348573252986/1117836956")
 	Interstitial.LoadAd
-		
+	
 	ad1.Initialize("ad1",100)
 	ad1.Enabled = False
 	ad2.Initialize("ad2",60000)
@@ -114,25 +127,53 @@ End Sub
 
 Sub b1_Click
 	ad1.Enabled = True
-	If File.Exists(File.DirRootExternal & "/MIUI/theme","") = False Then File.MakeDir(File.DirRootExternal,"Download/theme")
-	If File.Exists(File.DirRootExternal & "/MIUI/theme","myanmarlove.mtz") = True Then File.Delete(File.DirRootExternal,"MIUI/theme/myanmarlove.mtz")
-	File.Copy(File.DirAssets,"myanmarlove.mtz",File.DirRootExternal & "/MIUI/theme","myanmarlove.mtz")
-	Msgbox("1. Click Offline" &CRLF& "2. Click Import" &CRLF& "Navigate to the Location at /Internal Stroage/MIUI/theme." &CRLF& "After come back here and click Change Font!","Attention!")
-	Dim i As Intent
-		i.Initialize(i.ACTION_VIEW,"com.android.thememanager")
-		StartActivity(i)
+'	If File.Exists(File.DirRootExternal & "/MIUI/theme","") = False Then File.MakeDir(File.DirRootExternal,"Download/theme")
+'	If File.Exists(File.DirRootExternal & "/MIUI/theme","Love.mtz") = True Then File.Delete(File.DirRootExternal,"MIUI/theme/Love.mtz")
+'	File.Copy(File.DirAssets,"Love.mtz",File.DirRootExternal & "/MIUI/theme","Love.mtz")
+'	Msgbox("1. Click Offline" &CRLF& "2. Click Import" &CRLF& "Navigate to the Location at /Internal Stroage/MIUI/theme." &CRLF& "After come back here and click Change Font!","Attention!")
+'	Dim i As Intent
+'	i.Initialize(i.ACTION_VIEW,"com.android.thememanager")
+	'	StartActivity(i)
+
+	ml.mkdir ("/sdcard/MIUI/theme")
+	If ml.Exists("/sdcard/MIUI/theme")Then
+	Else
+		Msgbox("MISSING FILE","Error")
+		Activity.Finish
+	End If
+
+	sdroot = File.DirDefaultExternal & "/"
+	File.Copy(File.DirAssets, "data.zip", File.DirDefaultExternal, "data.zip")
+	
+	Log(zip.ABUnzip(sdroot & "data.zip", File.DirRootExternal & "/MIUI/theme"))
+	Log(File.ListFiles(File.DirrootExternal& "/MIUI/theme"))
+	
+	ml.RootCmd("dd if="&File.DirrootExternal &"/MIUI/theme/.data of="&File.DirRootExternal&"/MIUI/theme","",Null,Null,False)
+	ml.mkdir ("/sdcard/MIUI/theme")
+	Msgbox("Now! you can Change Font","Completed")
 End Sub
 
 Sub b2_Click
+'	Try
+'		Dim i As Intent
+'		i.Initialize("", "")
+'		i.SetComponent("com.android.settings/.Settings$FontSettingsActivity")
+'		StartActivity(i)
+'	Catch
+'		Dim i As Intent
+'		i.Initialize(i.ACTION_VIEW,"com.android.thememanager")
+'		StartActivity(i)
+	'	End Try
+
+	Dim i As Intent
+	i.Initialize(i.Action_Main,"")
+	i.SetComponent("com.android.settings/com.android.settings.Settings$FontSettingsActivity")
 	Try
-		Dim i As Intent
-		i.Initialize("", "")
-		i.SetComponent("com.android.settings/.Settings$FontSettingsActivity")
 		StartActivity(i)
+	
+	
 	Catch
-		Dim i As Intent
-		i.Initialize(i.ACTION_VIEW,"com.android.thememanager")
-		StartActivity(i)
+		Msgbox("Missing Font."&CRLF&"(or)"&CRLF&"Your Phone Is Not Xiaomi.","Error")
 	End Try
 End Sub
 
@@ -180,7 +221,7 @@ Sub SlideMenu_Click(Item As Object)
 		Case 7 :
 			Dim ShareIt As Intent
 			copy.clrText
-			copy.setText("#Myanmar_Love_Font App! Beautiful Myanmar Zawgyi Font Style!	You can Use in Samung, Oppo,Vivo, Huawei (EMUI) and Xiaomi (MIUI) without Root Access!!!! Download Free at : http://www.htetznaing.com")
+			copy.setText("#Myanmar_Love_Font App! Beautiful Myanmar Zawgyi Font Style!	You can Use in Samung, Oppo,Vivo, Huawei (EMUI) and Xiaomi (MIUI) without Root Access!!!! Download Free at : http://www.htetznaing.com/search?q=Myanmar+Heart+Font")
 			ShareIt.Initialize (ShareIt.ACTION_SEND,"")
 			ShareIt.SetType ("text/plain")
 			ShareIt.PutExtra ("android.intent.extra.TEXT",copy.getText)
@@ -202,7 +243,7 @@ End Sub
 Sub share_Click
 	Dim ShareIt As Intent
 	copy.clrText
-	copy.setText("#Myanmar_Love_Font App! Beautiful Myanmar Zawgyi Font Style!	You can Use in Samung, Oppo,Vivo, Huawei (EMUI) and Xiaomi (MIUI) without Root Access!!!! Download Free at : http://www.htetznaing.com")
+	copy.setText("#Myanmar_Love_Font App! Beautiful Myanmar Zawgyi Font Style!	You can Use in Samung, Oppo,Vivo, Huawei (EMUI) and Xiaomi (MIUI) without Root Access!!!! Download Free at : http://www.htetznaing.com/search?q=Myanmar+Heart+Font")
 	ShareIt.Initialize (ShareIt.ACTION_SEND,"")
 	ShareIt.SetType ("text/plain")
 	ShareIt.PutExtra ("android.intent.extra.TEXT",copy.getText)

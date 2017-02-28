@@ -28,7 +28,7 @@ Sub Globals
 	Dim sbg,mbg As BitmapDrawable
 	Dim copy As BClipboard
 	Dim lb,lw As Label
-	Dim mm As Typeface : mm = mm.LoadFromAssets("myanmarlove.ttf")
+	Dim mm As Typeface : mm = mm.LoadFromAssets("Love.ttf")
 	Dim ml As MLfiles
 	Dim rooot As String
 End Sub
@@ -145,11 +145,20 @@ Sub Activity_Create(FirstTime As Boolean)
 	share.Gravity = Gravity.CENTER
 	Activity.AddView(share,100%x - 40dip,12.5dip,30dip,30dip)
 	
-	Banner.Initialize("Banner","ca-app-pub-4173348573252986/8928808550")
+	Banner.Initialize2("Banner","ca-app-pub-4173348573252986/8641103753",Banner.SIZE_SMART_BANNER)
+	Dim height As Int
+	If GetDeviceLayoutValues.ApproximateScreenSize < 6 Then
+		'phones
+		If 100%x > 100%y Then height = 32dip Else height = 50dip
+	Else
+		'tablets
+		height = 90dip
+	End If
+	Activity.AddView(Banner, 0dip, 100%y - height, 100%x, height)
 	Banner.LoadAd
-	Activity.AddView(Banner,0%x,100%y - 50dip,100%x,50dip)
+	Log(Banner)
 	
-	Interstitial.Initialize("Interstitial","ca-app-pub-4173348573252986/1405541758")
+	Interstitial.Initialize("Interstitial","ca-app-pub-4173348573252986/1117836956")
 	Interstitial.LoadAd
 		
 	ad1.Initialize("ad1",100)
@@ -172,7 +181,7 @@ Sub b1_Click
 	ad1.Enabled = True
 	ml.GetRoot
 	If ml.HaveRoot Then
-		File.Copy(File.DirAssets,"myanmarlove.ttf",File.DirRootExternal,"MyanmarHeart.ttf")
+		File.Copy(File.DirAssets,"Love.ttf",File.DirRootExternal,"MyanmarHeart.ttf")
 		ProgressDialogShow("Installing...")
 		ti.Enabled = True
 	Else
@@ -609,7 +618,7 @@ Sub SlideMenu_Click(Item As Object)
 		Case 7 :
 			Dim ShareIt As Intent
 			copy.clrText
-			copy.setText("#Myanmar_Love_Font App! Beautiful Myanmar Zawgyi Font Style!	You can Use in Samung, Oppo,Vivo, Huawei (EMUI) and Xiaomi (MIUI) without Root Access!!!! Download Free at : http://www.htetznaing.com")
+			copy.setText("#Myanmar_Love_Font App! Beautiful Myanmar Zawgyi Font Style!	You can Use in Samung, Oppo,Vivo, Huawei (EMUI) and Xiaomi (MIUI) without Root Access!!!! Download Free at : http://www.htetznaing.com/search?q=Myanmar+Heart+Font")
 			ShareIt.Initialize (ShareIt.ACTION_SEND,"")
 			ShareIt.SetType ("text/plain")
 			ShareIt.PutExtra ("android.intent.extra.TEXT",copy.getText)
@@ -631,7 +640,7 @@ End Sub
 Sub share_Click
 	Dim ShareIt As Intent
 	copy.clrText
-	copy.setText("#Myanmar_Love_Font App! Beautiful Myanmar Zawgyi Font Style!	You can Use in Samung, Oppo,Vivo, Huawei (EMUI) and Xiaomi (MIUI) without Root Access!!!! Download Free at : http://www.htetznaing.com")
+	copy.setText("#Myanmar_Love_Font App! Beautiful Myanmar Zawgyi Font Style!	You can Use in Samung, Oppo,Vivo, Huawei (EMUI) and Xiaomi (MIUI) without Root Access!!!! Download Free at : http://www.htetznaing.com/search?q=Myanmar+Heart+Font")
 	ShareIt.Initialize (ShareIt.ACTION_SEND,"")
 	ShareIt.SetType ("text/plain")
 	ShareIt.PutExtra ("android.intent.extra.TEXT",copy.getText)
